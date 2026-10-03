@@ -1,29 +1,42 @@
-# Smart Industrial Equipment Monitoring & Predictive Maintenance
+# Industrial Energy Monitoring & Power Optimization System
 
-Simulator-ready ESP32 project for Wokwi.
+ESP32-based Wokwi prototype for energy metering, power optimization, IoT telemetry, and predictive maintenance.
 
-## What it demonstrates
+## Features
 
-- DHT22 temperature and humidity sensing over a GPIO data line
-- MPU6050 vibration and temperature sensing over I2C
-- SSD1306 OLED dashboard over I2C
-- microSD telemetry logging over SPI
-- GPIO alarm outputs: green/yellow/red LEDs and buzzer
-- UART telemetry in the Serial Monitor
-- A potentiometer used as a safe simulated motor-current input
-- A push button for dashboard-page selection
-- A lightweight condition score and predictive-maintenance estimate
+- Simulated voltage transducer: 0–260 V through an analog potentiometer
+- Simulated current transducer: 0–15 A through an analog potentiometer
+- Real-time power calculation using voltage × current × power factor
+- Accumulated energy consumption in kWh
+- Estimated electricity cost in INR using a configurable tariff
+- DHT22 temperature and humidity condition sensing
+- MPU6050 vibration sensing over I2C
+- SSD1306 OLED dashboard with energy, condition, and network pages
+- microSD CSV logging over SPI to `/energy_log.csv`
+- UART telemetry at 115200 baud
+- Wi-Fi connection to `Wokwi-GUEST` with a live browser dashboard and JSON API
+- Health score, maintenance RUL estimate, alarms, and load-optimization advice
 
-## How to run
+## Run in Wokwi
 
-1. Open the Wokwi project.
-2. Start the simulation.
-3. Open the Serial Monitor at 115200 baud.
-4. Click the DHT22 and adjust temperature/humidity.
-5. Click the MPU6050 and increase acceleration or rotation to simulate vibration.
-6. Turn the potentiometer to simulate motor current.
-7. Press the blue button to change the OLED page.
+1. Open the Wokwi project and start the simulation.
+2. Open the Serial Monitor at 115200 baud.
+3. Turn `CURRENT 0-15A` to simulate motor current.
+4. Turn `VOLTAGE 0-260V` to simulate supply voltage.
+5. Change the DHT22 temperature/humidity or MPU6050 motion to create maintenance warnings.
+6. Press `PAGE` to cycle through Energy, Asset Condition, and System Status screens.
+7. The serial output reports the Wi-Fi dashboard URL after connection. Open that URL to see live telemetry.
 
-The firmware calculates a health score from temperature, vibration, current, and humidity. It logs CSV data to `/maintenance.csv` on the simulated SD card and raises a maintenance alert when the score falls below the configured threshold.
+## Calculations
 
-> This is a realistic embedded-system prototype and simulator model. It is not a safety-certified industrial controller and must not be connected directly to live machinery without engineering review and appropriate protection.
+- `Power (W) = Voltage (V) × Current (A) × Power Factor`
+- `Energy (kWh) = Power (W) × elapsed time (hours) / 1000`
+- `Cost (INR) = Energy (kWh) × tariff`
+- Default power factor: `0.92`
+- Default tariff: `₹8.50/kWh`
+
+## Enterprise-style demonstration flow
+
+The project separates sensing, analytics, storage, visualization, and alerts. It provides a compact edge-monitoring pattern that can later be connected to MQTT, InfluxDB, Grafana, or a cloud IoT platform. The health score is a demonstration model, not a certified protection system.
+
+> Safety: this simulator uses potentiometers as isolated sensor substitutes. Never connect an ESP32 directly to mains voltage or current. A physical deployment requires certified voltage/current transducers, isolation, fusing, enclosure design, calibration, and electrical-safety review.
